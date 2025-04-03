@@ -1,0 +1,89 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+int sensor_pin = A0;       // Sensor Pin
+int relay_pin = 7;         // Relay Pin
+int led_pin = 8;           // LED Pin
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.init();                      // Initialize the LCD
+  lcd.backlight();
+  
+  // Display greeting message
+  lcd.setCursor(0, 0);
+  lcd.print("Greeting User!");
+  lcd.setCursor(0, 1);
+  lcd.print("Lets Get Started!");
+  delay(4000);  // Wait for 4 seconds
+  
+  lcd.clear();  // Clear the LCD after displaying the greeting message
+  
+  pinMode(sensor_pin, INPUT);
+  pinMode(relay_pin, OUTPUT);
+  pinMode(led_pin, OUTPUT);  // Set LED pin as output
+}
+
+void loop()
+{
+  lcd.clear();  // Clear the LCD before displaying "Analyzing"
+  lcd.setCursor(0, 0);  // Set the cursor at the top-left corner
+  lcd.print("Analyzing....  ");  // Display "Analyzing" message
+  delay(1000);  // Wait for 1 second
+
+  lcd.clear();  // Clear the LCD before showing sensor data and status
+
+  int sensor_data = analogRead(sensor_pin);
+
+  if(sensor_data == 0)  // Check if the sensor is disconnected or not responding
+  {
+    Serial.println("Sensor Error: Not responding");
+    lcd.setCursor(0, 0);
+    lcd.print("Sensor Error! ");
+    lcd.setCursor(0, 1);
+    lcd.print("Check Connection!");
+    delay(2000);  // Pause for 2 seconds to alert the user
+  }
+  else
+  {
+    Serial.print("Sensor_data:");
+    Serial.print(sensor_data);
+    Serial.print("\t | ");
+    
+    if(sensor_data > 650)
+    {
+      Serial.println("No moisture, Soil is dry");
+      digitalWrite(relay_pin, LOW);
+      digitalWrite(led_pin, HIGH);  // Turn ON LED when relay is ON
+      lcd.setCursor(0, 0);
+      lcd.print("Soil is Dry.   ");
+      lcd.setCursor(0, 1);
+      lcd.print("Watering Plants!   ");
+    }
+    else if(sensor_data >= 400 && sensor_data <= 650)
+    {
+      Serial.println("There is some moisture, Soil is medium");
+      digitalWrite(relay_pin, HIGH);
+      digitalWrite(led_pin, LOW);   // Turn OFF LED when relay is OFF
+      lcd.setCursor(0, 0);
+      lcd.print("Soil is Moderate.");
+      lcd.setCursor(0, 1);
+      lcd.print("Stopped Watering!  ");
+    }
+    else if(sensor_data < 400)
+    {
+      Serial.println("Soil is wet");
+      digitalWrite(relay_pin, HIGH);
+      digitalWrite(led_pin, LOW);   // Turn OFF LED when relay is OFF
+      lcd.setCursor(0, 0);
+      lcd.print("Soil is Wet.   ");
+      lcd.setCursor(0, 1);
+      lcd.print("Stopped Watering! ");
+    }
+  }
+
+  delay(1500);  // Pause briefly before restarting the loop
+}
