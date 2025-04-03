@@ -1,5 +1,5 @@
 Overview: 
-This project is an Arduino-based automated irrigation system that monitors soil moisture levels and controls a motor pump via a relay module to ensure efficient watering. The system provides real-time status updates through an LCD display and logs sensor readings via the Serial Monitor.
+This project is an Arduino-based automated irrigation system that monitors soil moisture levels and controls a motor pump via a relay module to ensure efficient watering. The system provides real-time status updates through an LCD display and logs sensor readings via the serial monitor.
 
 Features: 
 Soil Moisture Monitoring – Reads real-time moisture levels from the sensor.
