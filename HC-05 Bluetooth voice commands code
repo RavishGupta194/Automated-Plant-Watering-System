@@ -1,0 +1,27 @@
+String input = "";
+String lastCommand = ""; // Store the last valid command
+
+void setup() {
+  pinMode(13, OUTPUT);
+  Serial.begin(9600);
+  digitalWrite(13, HIGH); // Turn LED on initially
+}
+
+void loop() {
+  if (Serial.available()) {
+    input = Serial.readStringUntil('\n'); // Read until Enter key (newline)
+    input.trim(); // Remove any whitespace or newline characters
+
+    Serial.println(input); // Echo input back
+
+    if (input == "Alexa water my plants") {
+      digitalWrite(13, LOW); // Turn off LED
+      lastCommand = input; // Store the command
+    } else if (input == "Alexa stop watering") {
+      digitalWrite(13, HIGH); // Turn on LED
+      lastCommand = input; // Store the command
+    }
+  }
+  
+  delay(100);
+}
